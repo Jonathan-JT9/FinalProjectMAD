@@ -1,11 +1,16 @@
-import {StyleSheet, Text, View, TextInput as Input} from 'react-native';
+import { StyleSheet, TextInput as Input, View } from 'react-native';
 import React from 'react';
 
-const TextInput = ({text, placeholder}) => {
+const TextInput = ({ placeholder, secureTextEntry = false, Icon }) => {
   return (
-    <View>
-      <Text style={styles.label}>{text}</Text>
-      <Input placeholder={placeholder} style={styles.input} />
+    <View style={styles.container}>
+      {Icon && <Icon width={20} height={20} style={styles.icon} />}
+      <Input
+        placeholder={placeholder}
+        secureTextEntry={secureTextEntry}
+        placeholderTextColor="#888888"
+        style={styles.input}
+      />
     </View>
   );
 };
@@ -13,18 +18,21 @@ const TextInput = ({text, placeholder}) => {
 export default TextInput;
 
 const styles = StyleSheet.create({
-  label: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 16,
-    marginBottom: 6,
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    height: 56,
+  },
+  icon: {
+    marginRight: 12,
   },
   input: {
-    borderColor: '#020202',
-    borderWidth: 1,
-    borderRadius: 8,
-    color: '#8D92A3',
+    flex: 1,
+    fontSize: 16,
+    color: '#000',
     fontFamily: 'Poppins-Regular',
-    fontSize: 14,
-    padding: 10,
   },
 });

@@ -1,28 +1,43 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {Header, TextInput} from '../../components/molecules';
-import {Button, Gap} from '../../components/atoms';
+import { StyleSheet, Text, View } from 'react-native';
+import { TextInput } from '../../components/molecules';
+import { Button, Gap } from '../../components/atoms';
 
-const SignIn = ({navigation}) => {
+import MailIcon from '../../assets/mail.svg';
+import LockIcon from '../../assets/lock.svg';
+
+const SignIn = ({ navigation }) => {
   return (
     <View style={styles.pageContainer}>
-      <Header text="Sign In" />
+      <Gap height={40} />
+
+      <Text style={styles.loginTitle}>LOGIN</Text>
+      <Gap height={24} />
+
+      <Text style={styles.welcomeText}>Welcome to</Text>
+      <Text style={styles.subTitle}>Unklab Student Profile</Text>
+      <Gap height={20} />
+
       <View style={styles.contentContainer}>
-        <Gap height={26} />
-        <TextInput
-          text="Email Address"
-          placeholder="Enter your email address"
+        <TextInput placeholder="Email" Icon={MailIcon} />
+        <Gap height={16} />
+        <TextInput placeholder="Password" secureTextEntry Icon={LockIcon} />
+        <Gap height={32} />
+
+        <Button
+          text="LOGIN"
+          onPress={() => navigation.navigate('Home')}
+          buttonColor="#FFFFFF"
+          color="#4B2354"
+          radius={22}
         />
         <Gap height={16} />
-        <TextInput text="Password" placeholder="Enter your password" />
-        <Gap height={24} />
-        <Button text="Sign In" onPress={() => navigation.navigate('Home')} />
-        <Gap height={12} />
         <Button
-          text="Create New Account"
-          color="#8D92A3"
-          buttonColor="#FFFFFF"
+          text="CREATE ACCOUNT"
           onPress={() => navigation.navigate('SignUp')}
+          buttonColor="#FFFFFF"
+          color="#4B2354"
+          radius={22}
         />
       </View>
     </View>
@@ -34,10 +49,31 @@ export default SignIn;
 const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 28,
+  },
+  loginTitle: {
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4B2354',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  welcomeText: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: '#000000',
+    marginTop: 35,
+  },
+  subTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    textAlign: 'center',
+    color: '#000000',
   },
   contentContainer: {
-    flex: 1,
-    marginTop: 24,
-    marginHorizontal: 24,
+    marginTop: 20,
   },
 });
