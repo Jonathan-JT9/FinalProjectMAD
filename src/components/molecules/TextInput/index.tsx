@@ -1,10 +1,16 @@
 import { StyleSheet, TextInput as Input, View } from 'react-native';
 import React from 'react';
 
-const TextInput = ({ placeholder, secureTextEntry = false, Icon }) => {
+interface CustomTextInputProps {
+  placeholder: string;
+  secureTextEntry?: boolean;
+  icon?: React.ReactNode;
+}
+
+const TextInput: React.FC<CustomTextInputProps> = ({ placeholder, secureTextEntry = false, icon }) => {
   return (
     <View style={styles.container}>
-      {Icon && <Icon width={20} height={20} style={styles.icon} />}
+      {icon && <View style={styles.icon}>{icon}</View>}
       <Input
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}

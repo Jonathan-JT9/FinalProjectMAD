@@ -4,8 +4,8 @@ import { BackButton } from '../../../assets';
 
 const Button = ({
   text,
-  color = '#4B2354',
-  buttonColor = '#FFFFFF',
+  color = '#FFFFFF',
+  buttonColor = '#4B2354',
   iconOnly,
   icon,
   onPress,

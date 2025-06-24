@@ -1,37 +1,56 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
-import {Header, TextInput} from '../../components/molecules';
-import {Button, Gap} from '../../components/atoms';
-import {NullPhoto} from '../../assets';
+import { TextInput } from '../../components/molecules';
+import { Button, Gap } from '../../components/atoms';
+import BackIcon from '../../assets/arrow-back.svg';
+import MailIcon from '../../assets/mail.svg';
+import LockIcon from '../../assets/lock.svg';
+import PersonIcon from '../../assets/person.svg';
 
-const SignUp = ({navigation}) => {
+const SignUp = ({ navigation }) => {
   return (
     <View style={styles.pageContainer}>
-      <Header
-        text="Sign Up"
-        backButton={true}
-        onPress={() => navigation.goBack()}
-      />
-      <View style={styles.contentContainer}>
-        <View style={styles.profileContainer}>
-          <View style={styles.profileBorder}>
-            <TouchableOpacity activeOpacity={0.5}>
-              <Image source={NullPhoto} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Gap height={26} />
-        <TextInput text="Full Name" placeholder="Enter your full name" />
-        <Gap height={26} />
-        <TextInput
-          text="Email Address"
-          placeholder="Enter your email address"
-        />
+    <Gap height={20} />
+      <View style={styles.header}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.goBack()}>
+          <BackIcon width={24} height={24} />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>REGISTER</Text>
+        <View style={{ width: 24 }} />
+      </View>
+
+      <Gap height={40} />
+      <Text style={styles.welcomeText}>Welcome to</Text>
+      <Text style={styles.subTitle}>Unklab Student Profile</Text>
+
+      <Gap height={24} />
+      <View style={styles.profileContainer}>
+          <TouchableOpacity activeOpacity={0.5}>
+            <Image source={require('../../assets/Icon.png')} style={{ width: 105, height: 105 }} />
+          </TouchableOpacity>
+      </View>
+
+      <Gap height={16} />
+      <View style={styles.formContainer}>
+        <TextInput placeholder="First name" icon={<PersonIcon width={20} height={20} />} />
         <Gap height={16} />
-        <TextInput text="Password" placeholder="Enter your password" />
-        <Gap height={24} />
-        <Button text="Continue" onPress={() => navigation.navigate('SignIn')} />
-        <Gap height={12} />
+        <TextInput placeholder="Last name" icon={<PersonIcon width={20} height={20} />} />
+        <Gap height={16} />
+        <TextInput placeholder="Email" icon={<MailIcon width={20} height={20} />} />
+        <Gap height={16} />
+        <TextInput placeholder="Password" secureTextEntry icon={<LockIcon width={20} height={20} />} />
+        <Gap height={32} />
+        <Button
+          text="REGISTER NOW"
+          onPress={() => navigation.navigate('SignIn')}
+          buttonColor="#FFFFFF"
+          color="#4B2354"
+          radius={50}
+          iconOnly={null}
+          icon={null}
+        />
+        <Gap height={25} />
+        <Text style={styles.bottomText}>Already have an account?</Text>
       </View>
     </View>
   );
@@ -42,14 +61,36 @@ export default SignUp;
 const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 24,
   },
-  contentContainer: {
-    flex: 1,
-    marginTop: 24,
-    marginHorizontal: 24,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+  },
+  headerText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4B2354',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  welcomeText: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: '#000000',
+  },
+  subTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    textAlign: 'center',
+    color: '#000000',
   },
   profileContainer: {
-    alignItems: 'center',
+    alignItems: 'center', 
   },
   profileBorder: {
     height: 110,
@@ -57,8 +98,17 @@ const styles = StyleSheet.create({
     borderColor: '#8D92A3',
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderRadius: 110 / 2,
+    borderRadius: 55,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+  },
+  formContainer: {
+    marginTop: 16,
+  },
+  bottomText: {
+    textAlign: 'center',
+    color: '#8D92A3',
+    fontSize: 14,
   },
 });
