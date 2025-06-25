@@ -1,13 +1,30 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {TextInput} from '../../components/molecules';
 import {Button, Gap} from '../../components/atoms';
 import BackIcon from '../../assets/arrow-back.svg';
 import MailIcon from '../../assets/mail.svg';
 import LockIcon from '../../assets/lock.svg';
 import PersonIcon from '../../assets/person.svg';
+import {launchCamera} from 'react-native-image-picker';
 
 const SignUp = ({navigation}) => {
+  const [photo, setPhoto] = useState(require('../../assets/Icon.png'));
+
+  const openCamera = async () => {
+    const result = await launchCamera({
+      mediaType: 'photo',
+      maxWidth: 200,
+      maxHeight: 200,
+      quality: 0.7,
+      includeBase64: false,
+    });
+    if (result.didCancel) return;
+    if (result.assets && result.assets.length > 0) {
+      setPhoto({uri: result.assets[0].uri});
+    }
+  };
+
   return (
     <View style={styles.pageContainer}>
       <Gap height={20} />
@@ -27,11 +44,13 @@ const SignUp = ({navigation}) => {
 
       <Gap height={24} />
       <View style={styles.profileContainer}>
-        <TouchableOpacity activeOpacity={0.5}>
-          <Image
-            source={require('../../assets/Icon.png')}
-            style={{width: 105, height: 105}}
-          />
+        <TouchableOpacity activeOpacity={0.5} onPress={openCamera}>
+          <View style={styles.profileBorder}>
+            <Image
+              source={photo}
+              style={{width: 90, height: 90, borderRadius: 45}}
+            />
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -115,12 +134,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileBorder: {
-    height: 110,
-    width: 110,
+    height: 105,
+    width: 105,
     borderColor: '#8D92A3',
-    borderWidth: 1,
     borderStyle: 'dashed',
-    borderRadius: 55,
+    borderRadius: 52.5,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5F5F5',
