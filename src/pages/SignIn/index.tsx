@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TextInput } from '../../components/molecules';
-import { Button, Gap } from '../../components/atoms';
+import {StyleSheet, Text, View} from 'react-native';
+import {TextInput} from '../../components/molecules';
+import {Button, Gap} from '../../components/atoms';
 
 import MailIcon from '../../assets/mail.svg';
 import LockIcon from '../../assets/lock.svg';
 
-const SignIn = ({ navigation }) => {
+const SignIn = ({navigation}) => {
   return (
     <View style={styles.pageContainer}>
       <Gap height={40} />
@@ -26,7 +26,7 @@ const SignIn = ({ navigation }) => {
 
         <Button
           text="LOGIN"
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('HomePage')}
           buttonColor="#FFFFFF"
           color="#4B2354"
           radius={22}
