@@ -1,22 +1,24 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
-import { TextInput } from '../../components/molecules';
-import { Button, Gap } from '../../components/atoms';
+import {TextInput} from '../../components/molecules';
+import {Button, Gap} from '../../components/atoms';
 import BackIcon from '../../assets/arrow-back.svg';
 import MailIcon from '../../assets/mail.svg';
 import LockIcon from '../../assets/lock.svg';
 import PersonIcon from '../../assets/person.svg';
 
-const SignUp = ({ navigation }) => {
+const SignUp = ({navigation}) => {
   return (
     <View style={styles.pageContainer}>
-    <Gap height={20} />
+      <Gap height={20} />
       <View style={styles.header}>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigation.goBack()}>
           <BackIcon width={24} height={24} />
         </TouchableOpacity>
         <Text style={styles.headerText}>REGISTER</Text>
-        <View style={{ width: 24 }} />
+        <View style={{width: 24}} />
       </View>
 
       <Gap height={40} />
@@ -25,20 +27,36 @@ const SignUp = ({ navigation }) => {
 
       <Gap height={24} />
       <View style={styles.profileContainer}>
-          <TouchableOpacity activeOpacity={0.5}>
-            <Image source={require('../../assets/Icon.png')} style={{ width: 105, height: 105 }} />
-          </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.5}>
+          <Image
+            source={require('../../assets/Icon.png')}
+            style={{width: 105, height: 105}}
+          />
+        </TouchableOpacity>
       </View>
 
       <Gap height={16} />
       <View style={styles.formContainer}>
-        <TextInput placeholder="First name" icon={<PersonIcon width={20} height={20} />} />
+        <TextInput
+          placeholder="First name"
+          icon={<PersonIcon width={20} height={20} />}
+        />
         <Gap height={16} />
-        <TextInput placeholder="Last name" icon={<PersonIcon width={20} height={20} />} />
+        <TextInput
+          placeholder="Last name"
+          icon={<PersonIcon width={20} height={20} />}
+        />
         <Gap height={16} />
-        <TextInput placeholder="Email" icon={<MailIcon width={20} height={20} />} />
+        <TextInput
+          placeholder="Email"
+          icon={<MailIcon width={20} height={20} />}
+        />
         <Gap height={16} />
-        <TextInput placeholder="Password" secureTextEntry icon={<LockIcon width={20} height={20} />} />
+        <TextInput
+          placeholder="Password"
+          secureTextEntry
+          icon={<LockIcon width={20} height={20} />}
+        />
         <Gap height={32} />
         <Button
           text="REGISTER NOW"
@@ -50,7 +68,11 @@ const SignUp = ({ navigation }) => {
           icon={null}
         />
         <Gap height={25} />
-        <Text style={styles.bottomText}>Already have an account?</Text>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => navigation.navigate('SignIn')}>
+          <Text style={styles.bottomText}>Already have an account?</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -90,7 +112,7 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   profileContainer: {
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   profileBorder: {
     height: 110,
@@ -110,5 +132,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#8D92A3',
     fontSize: 14,
+    textDecorationLine: 'underline',
   },
 });
