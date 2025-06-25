@@ -19,9 +19,9 @@ const SignIn = ({navigation}) => {
       <Gap height={20} />
 
       <View style={styles.contentContainer}>
-        <TextInput placeholder="Email" Icon={MailIcon} />
+        <TextInput placeholder="Email" icon={<MailIcon width={20} height={20} />} />
         <Gap height={16} />
-        <TextInput placeholder="Password" secureTextEntry Icon={LockIcon} />
+        <TextInput placeholder="Password" secureTextEntry icon={<LockIcon width={20} height={20} />} />
         <Gap height={32} />
 
         <Button
@@ -30,6 +30,8 @@ const SignIn = ({navigation}) => {
           buttonColor="#FFFFFF"
           color="#4B2354"
           radius={22}
+          iconOnly={null}
+          icon={null}
         />
         <Gap height={16} />
         <Button
@@ -38,6 +40,8 @@ const SignIn = ({navigation}) => {
           buttonColor="#FFFFFF"
           color="#4B2354"
           radius={22}
+          iconOnly={null}
+          icon={null}
         />
       </View>
     </View>
