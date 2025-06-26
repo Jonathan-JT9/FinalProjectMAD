@@ -4,6 +4,8 @@ import SignIn from './src/pages/SignIn';
 import SignUp from './src/pages/SignUp';
 import HomePage from './src/pages/HomePage';
 import Profile from './src/pages/Profile';
+import Subject from './src/pages/Subject';
+import Grades from './src/pages/Grades';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
@@ -36,6 +38,16 @@ const App = () => {
         <Stack.Screen
           name="Profile"
           component={Profile}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Subject"
+          component={Subject}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Grades"
+          component={Grades}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

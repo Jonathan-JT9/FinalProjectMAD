@@ -38,17 +38,9 @@ const HomePage = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}
-          onPress={() => navigation.navigate('Certificates')}>
+          onPress={() => navigation.navigate('Grades')}>
           <Image
             source={require('../../assets/Certificates.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => navigation.navigate('Subjects')}>
-          <Image
-            source={require('../../assets/Subjects.png')}
             style={styles.icon}
           />
         </TouchableOpacity>

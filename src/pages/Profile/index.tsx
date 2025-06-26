@@ -9,6 +9,7 @@ const Profile = ({navigation}) => {
         <Gap height={24} />
         <Text style={styles.pageTitle}>PROFILE</Text>
         <Gap height={24} />
+        <Gap height={16} />
         <View style={styles.profileContainer}>
           <TouchableOpacity activeOpacity={0.5}>
             <Image
@@ -52,6 +53,9 @@ const Profile = ({navigation}) => {
           </View>
         </View>
       </View>
+      <TouchableOpacity style={styles.addSubjectButton} onPress={() => navigation.navigate('Subject')}>
+        <Text style={styles.addSubjectButtonText}>Add Subject</Text>
+      </TouchableOpacity>
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.navItem}
@@ -71,17 +75,9 @@ const Profile = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}
-          onPress={() => navigation.navigate('Certificates')}>
+          onPress={() => navigation.navigate('Grades')}>
           <Image
             source={require('../../assets/Certificates.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => navigation.navigate('Subjects')}>
-          <Image
-            source={require('../../assets/Subjects.png')}
             style={styles.icon}
           />
         </TouchableOpacity>
@@ -172,5 +168,21 @@ const styles = StyleSheet.create({
     height: 24,
     resizeMode: 'contain',
     tintColor: '#6A1B9A',
+  },
+  addSubjectButton: {
+    backgroundColor: '#4B2354',
+    borderRadius: 22,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    alignItems: 'center',
+    marginBottom: 8,
+    marginHorizontal: 24,
+  },
+  addSubjectButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 14,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
 });
