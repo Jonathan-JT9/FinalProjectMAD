@@ -1,51 +1,81 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {DummyPhoto} from '../../assets';
-import {Gap} from '../../components/atoms';
+import {Button, Gap} from '../../components/atoms';
+import {getDatabase, ref, child, get, onValue} from 'firebase/database';
+import {Loading} from '../../components/molecules';
 
-const HomePage = ({navigation}) => {
+// const HomePage = ({navigation}) => {
+const HomePage = ({route, navigation}) => {
+  const [photo, setPhoto] = useState(require('../../assets/Icon.png'));
+  const [firstName, setFirstName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const {uid} = route.params;
+  useEffect(() => {
+    setLoading(true);
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `users/${uid}`))
+      .then(snapshot => {
+        setLoading(false);
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          // setPhoto({uri: data.photo});
+          console.log('data.photo:', data.photo);
+          setPhoto(
+            data.photo ? {uri: data.photo} : require('../../assets/Icon.png'),
+          );
+          setFirstName(data.firstName);
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error(error);
+      });
+  }, []);
   return (
-    <View style={styles.pageContainer}>
-      <View style={styles.contentWrapper}>
-        <Text style={styles.subTitle}>WELCOME</Text>
-        <Gap height={10} />
-        <View style={styles.profileContainer}>
-          <Image
-            source={require('../../assets/Icon.png')}
-            style={{width: 253, height: 232}}
-          />
+    <>
+      <View style={styles.pageContainer}>
+        <View style={styles.contentWrapper}>
+          <Text style={styles.subTitle}>WELCOME</Text>
           <Gap height={10} />
-          <Text style={styles.name}>JORYMO HADAM</Text>
+          <View style={styles.profileContainer}>
+            <Image source={photo} style={styles.photo} />
+            <Gap height={10} />
+            <Text style={styles.name}>{`Hi, ${
+              firstName || 'No Name Found'
+            }`}</Text>
+          </View>
+        </View>
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => navigation.navigate('Home')}>
+            <Image
+              source={require('../../assets/Home.png')}
+              style={styles.iconActive}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => navigation.navigate('Profile')}>
+            <Image
+              source={require('../../assets/Profile.png')}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => navigation.navigate('Grades')}>
+            <Image
+              source={require('../../assets/Certificates.png')}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
       </View>
-
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => navigation.navigate('Home')}>
-          <Image
-            source={require('../../assets/Home.png')}
-            style={styles.iconActive}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => navigation.navigate('Profile')}>
-          <Image
-            source={require('../../assets/Profile.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => navigation.navigate('Grades')}>
-          <Image
-            source={require('../../assets/Certificates.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
+      {loading && <Loading />}
+    </>
   );
 };
 
@@ -86,9 +116,9 @@ const styles = StyleSheet.create({
     // marginTop: 20,
   },
   photo: {
-    height: 70,
-    width: 70,
-    borderRadius: 35,
+    height: 200,
+    width: 200,
+    borderRadius: 100,
   },
   name: {
     fontFamily: 'Poppins-Regular',

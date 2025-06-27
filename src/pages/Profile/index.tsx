@@ -53,7 +53,9 @@ const Profile = ({navigation}) => {
           </View>
         </View>
       </View>
-      <TouchableOpacity style={styles.addSubjectButton} onPress={() => navigation.navigate('Subject')}>
+      <TouchableOpacity
+        style={styles.addSubjectButton}
+        onPress={() => navigation.navigate('Subject')}>
         <Text style={styles.addSubjectButtonText}>Add Subject</Text>
       </TouchableOpacity>
       <View style={styles.footer}>

@@ -8,6 +8,8 @@ import Subject from './src/pages/Subject';
 import Grades from './src/pages/Grades';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import FlashMessage from 'react-native-flash-message';
+import './src/config/Firebase';
 
 const Stack = createNativeStackNavigator();
 
