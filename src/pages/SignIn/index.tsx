@@ -1,12 +1,48 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {TextInput} from '../../components/molecules';
 import {Button, Gap} from '../../components/atoms';
-
+import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
+import {getDatabase, ref, child, get} from 'firebase/database';
+import {showMessage} from 'react-native-flash-message';
 import MailIcon from '../../assets/mail.svg';
 import LockIcon from '../../assets/lock.svg';
 
 const SignIn = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onSubmit = async () => {
+    const auth = getAuth();
+    const db = getDatabase();
+    signInWithEmailAndPassword(auth, email, password)
+      .then(async userCredential => {
+        const user = userCredential.user;
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, `users/${user.uid}`));
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          console.log('userData from database:', userData);
+          navigation.navigate('HomePage', {
+            uid: user.uid,
+            firstName: userData.firstName || 'User',
+            photo: userData.photo || '',
+          });
+        } else {
+          showMessage({
+            message: 'Data pengguna tidak ditemukan di database.',
+            type: 'danger',
+          });
+        }
+      })
+      .catch(error => {
+        showMessage({
+          message: error.message,
+          type: 'danger',
+        });
+      });
+  };
+
   return (
     <View style={styles.pageContainer}>
       <Gap height={40} />
@@ -19,14 +55,25 @@ const SignIn = ({navigation}) => {
       <Gap height={20} />
 
       <View style={styles.contentContainer}>
-        <TextInput placeholder="Email" icon={<MailIcon width={20} height={20} />} />
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={value => setEmail(value)}
+          icon={<MailIcon width={20} height={20} />}
+        />
         <Gap height={16} />
-        <TextInput placeholder="Password" secureTextEntry icon={<LockIcon width={20} height={20} />} />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={value => setPassword(value)}
+          secureTextEntry={true}
+          icon={<LockIcon width={20} height={20} />}
+        />
         <Gap height={32} />
 
         <Button
           text="LOGIN"
-          onPress={() => navigation.navigate('HomePage')}
+          onPress={onSubmit}
           buttonColor="#FFFFFF"
           color="#4B2354"
           radius={22}

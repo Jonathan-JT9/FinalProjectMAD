@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput as Input, View } from 'react-native';
+import {StyleSheet, TextInput as Input, View} from 'react-native';
 import React from 'react';
 
 interface CustomTextInputProps {
@@ -7,7 +7,12 @@ interface CustomTextInputProps {
   icon?: React.ReactNode;
 }
 
-const TextInput: React.FC<CustomTextInputProps> = ({ placeholder, secureTextEntry = false, icon }) => {
+const TextInput: React.FC<CustomTextInputProps> = ({
+  placeholder,
+  secureTextEntry = false,
+  icon,
+  ...rest
+}) => {
   return (
     <View style={styles.container}>
       {icon && <View style={styles.icon}>{icon}</View>}
@@ -16,6 +21,7 @@ const TextInput: React.FC<CustomTextInputProps> = ({ placeholder, secureTextEntr
         secureTextEntry={secureTextEntry}
         placeholderTextColor="#888888"
         style={styles.input}
+        {...rest}
       />
     </View>
   );

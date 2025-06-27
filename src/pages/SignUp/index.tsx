@@ -1,4 +1,11 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import React, {useState} from 'react';
 import {TextInput} from '../../components/molecules';
 import {Button, Gap} from '../../components/atoms';
@@ -6,10 +13,21 @@ import BackIcon from '../../assets/arrow-back.svg';
 import MailIcon from '../../assets/mail.svg';
 import LockIcon from '../../assets/lock.svg';
 import PersonIcon from '../../assets/person.svg';
-import {launchCamera} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {showMessage} from 'react-native-flash-message';
+import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
+import {getDatabase, ref, set} from 'firebase/database';
 
 const SignUp = ({navigation}) => {
   const [photo, setPhoto] = useState(require('../../assets/Icon.png'));
+  const [photoForDB, setPhotoForDB] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [religion, setReligion] = useState('');
 
   const openCamera = async () => {
     const result = await launchCamera({
@@ -17,12 +35,54 @@ const SignUp = ({navigation}) => {
       maxWidth: 200,
       maxHeight: 200,
       quality: 0.7,
-      includeBase64: false,
+      includeBase64: true,
     });
-    if (result.didCancel) return;
-    if (result.assets && result.assets.length > 0) {
-      setPhoto({uri: result.assets[0].uri});
+
+    console.log(result);
+    if (result.didCancel) {
+      showMessage({
+        message: 'Ups, sepertinya anda tidak memilih foto',
+        type: 'danger',
+      });
+    } else {
+      const assets = result.assets[0];
+      const base64 = `data: ${assets.type};base64, ${assets.base64}`;
+      setPhoto({uri: base64});
+      setPhotoForDB(base64);
     }
+  };
+
+  const onSubmit = () => {
+    const data = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      address: address,
+      religion: religion,
+      photo: photoForDB,
+    };
+    const auth = getAuth();
+    const db = getDatabase();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        // Signed up
+        const user = userCredential.user;
+        // Simpan ke dalam real time database
+        set(ref(db, 'users/' + user.uid), data);
+        showMessage({
+          message: 'Registrasi berhasil, silahkan login',
+          type: 'success',
+        });
+        navigation.navigate('SignIn');
+      })
+      .catch(error => {
+        const errorMessage = error.message;
+        showMessage({
+          message: errorMessage,
+          type: 'danger',
+        });
+      });
   };
 
   return (
@@ -59,43 +119,57 @@ const SignUp = ({navigation}) => {
         <View style={styles.formContainer}>
           <TextInput
             placeholder="First name"
+            value={firstName}
+            onChangeText={value => setFirstName(value)}
             icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={16} />
           <TextInput
             placeholder="Last name"
+            value={lastName}
+            onChangeText={value => setLastName(value)}
             icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={16} />
           <TextInput
             placeholder="Email"
-            icon={<MailIcon width={20} height={20} />}
+            value={email}
+            onChangeText={value => setEmail(value)}
+            icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={16} />
           <TextInput
             placeholder="Password"
-            secureTextEntry
-            icon={<LockIcon width={20} height={20} />}
+            value={password}
+            onChangeText={value => setPassword(value)}
+            secureTextEntry={true}
+            icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={16} />
           <TextInput
             placeholder="Phone"
+            value={phone}
+            onChangeText={value => setPhone(value)}
             icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={16} />
           <TextInput
             placeholder="Address"
+            value={address}
+            onChangeText={value => setAddress(value)}
             icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={16} />
           <TextInput
             placeholder="Religion"
+            value={religion}
+            onChangeText={value => setReligion(value)}
             icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={32} />
           <Button
             text="REGISTER NOW"
-            onPress={() => navigation.navigate('SignIn')}
+            onPress={onSubmit}
             buttonColor="#FFFFFF"
             color="#4B2354"
             radius={50}
