@@ -1,82 +1,83 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Button, Gap } from '../../components/atoms';
+import { getDatabase, ref, onValue } from 'firebase/database';
+import App from '../../config/Firebase';
+import { getAuth } from 'firebase/auth';
+import { useMemo } from 'react';
 
-const gradesData = [
-  {
-    color: '#FFD600',
-    subject: 'Mobile Application Development',
-    teacher: 'Stenly Adam',
-    gradePoints: '4.00',
-    credits: 3,
-    grade: 'A',
-    status: 'Graded',
-  },
-  {
-    color: '#00C9A7',
-    subject: 'Data Structure and Algorithms',
-    teacher: 'Lidya Loch',
-    gradePoints: '4.00',
-    credits: 3,
-    grade: 'A',
-    status: 'Graded',
-  },
-  {
-    color: '#2196F3',
-    subject: 'Computer Network',
-    teacher: 'Yuan Mambu',
-    gradePoints: '4.00',
-    credits: 3,
-    grade: 'A',
-    status: 'Graded',
-  },
-  {
-    color: '#FF5252',
-    subject: 'Database Management Systems',
-    teacher: 'Marchell Tombang',
-    gradePoints: '4.00',
-    credits: 3,
-    grade: 'A',
-    status: 'Graded',
-  },
-  {
-    color: '#A259FF',
-    subject: 'Software Engineering',
-    teacher: 'Stenly Fungus',
-    gradePoints: '4.00',
-    credits: 3,
-    grade: 'A',
-    status: 'Graded',
-  },
-  {
-    color: '#6A6AFF',
-    subject: 'Research Method',
-    teacher: 'Andrew Liem',
-    gradePoints: '4.00',
-    credits: 3,
-    grade: 'A',
-    status: 'Graded',
-  },
-];
+interface GradeItem {
+  color?: string;
+  subject: string;
+  teacher: string;
+  gradePoints: string;
+  credits: string;
+  grade: string;
+  status: string;
+}
 
-const Grades = ({ navigation }) => {
+const Grades = ({ navigation }: { navigation: any }) => {
+  const userId = getAuth().currentUser?.uid;
+  const [gradesData, setGradesData] = React.useState<GradeItem[]>([]);
+
+  React.useEffect(() => {
+    const db = getDatabase(App);
+    const subjectsRef = ref(db, `users/${userId}/subjects`);
+    const unsubscribe = onValue(subjectsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const arr = Object.values(data) as GradeItem[];
+        setGradesData(arr);
+      } else {
+        setGradesData([]);
+      }
+    });
+    return () => unsubscribe();
+  }, [userId]);
+
+  // GPA calculation
+  const { gpa, completed, total } = useMemo(() => {
+    let totalPoints = 0;
+    let totalCredits = 0;
+    let completed = 0;
+    gradesData.forEach(item => {
+      const points = parseFloat(item.gradePoints);
+      const credits = parseFloat(item.credits);
+      if (!isNaN(points) && !isNaN(credits)) {
+        totalPoints += points * credits;
+        totalCredits += credits;
+        completed++;
+      }
+    });
+    const gpa = totalCredits > 0 ? (totalPoints / totalCredits) : 0;
+    return { gpa, completed, total: gradesData.length };
+  }, [gradesData]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Button iconOnly icon="back" onPress={() => navigation.goBack()} />
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}>
           <Text style={styles.headerTitle}>GRADES</Text>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 24}}>
         <Gap height={8} />
-        <View style={styles.performanceCard}>
-          <Text style={styles.performanceText}>ACADEMIC PERFORMANCE</Text>
+        {/* Academic Performance Card */}
+        <View style={styles.academicCard}>
+          <Text style={styles.academicTitle}>ACADEMIC PERFORMANCE</Text>
+          <Text style={styles.gpaLabel}>CURRENT GPA</Text>
+          <Text style={styles.gpaValue}>{gpa.toFixed(2)}</Text>
+          <View style={styles.progressBarBg}>
+            <View style={[styles.progressBarFill, {width: `${(gpa/4)*100}%`}]} />
+          </View>
+          <Text style={styles.gpaScale}>Scale: 0.00 - 4.00</Text>
+          <Text style={styles.subjectsInfo}>{completed} of {total} subjects completed</Text>
         </View>
         <Gap height={16} />
         {gradesData.map((item, idx) => (
           <View style={styles.gradeCard} key={idx}>
-            <View style={[styles.iconBox, {backgroundColor: item.color}]} />
+            <View style={[styles.iconBox, {backgroundColor: item.color || '#FFD600'}]} />
             <View style={{flex: 1}}>
               <Text style={styles.subject}>{item.subject}</Text>
               <Text style={styles.teacher}>{item.teacher}</Text>
@@ -91,7 +92,7 @@ const Grades = ({ navigation }) => {
           </View>
         ))}
         <Gap height={16} />
-        <Button text="DONE" color="#4B2354" buttonColor="#fff" radius={22} iconOnly={false} icon={null} />
+        <Button text="DONE" color="#4B2354" buttonColor="#fff" radius={22} iconOnly={false} icon="" onPress={() => {}} />
         <Gap height={16} />
       </ScrollView>
       <View style={styles.footer}>
@@ -147,17 +148,57 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     textAlign: 'center',
   },
-  performanceCard: {
+  academicCard: {
     backgroundColor: '#4B2354',
     borderRadius: 16,
-    paddingVertical: 24,
+    padding: 24,
     alignItems: 'center',
     marginBottom: 8,
   },
-  performanceText: {
+  academicTitle: {
     color: '#fff',
     fontWeight: '700',
     fontSize: 14,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 16,
+  },
+  gpaLabel: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 13,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  gpaValue: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 24,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  progressBarBg: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    width: '100%',
+    height: 16,
+    marginBottom: 8,
+  },
+  progressBarFill: {
+    backgroundColor: '#E6F9EA',
+    borderRadius: 8,
+    height: '100%',
+  },
+  gpaScale: {
+    color: '#fff',
+    fontSize: 13,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  subjectsInfo: {
+    color: '#fff',
+    fontSize: 13,
     letterSpacing: 1,
     textTransform: 'uppercase',
   },

@@ -3,13 +3,35 @@ import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {Button, Gap} from '../../components/atoms';
 import {getDatabase, ref, child, get, onValue} from 'firebase/database';
 import {Loading} from '../../components/molecules';
+import {getAuth} from 'firebase/auth';
+import { RouteProp } from '@react-navigation/native';
 
-// const HomePage = ({navigation}) => {
-const HomePage = ({route, navigation}) => {
+type RootStackParamList = {
+  Home: { uid?: string } | undefined;
+  Profile: undefined;
+  Grades: { uid?: string } | undefined;
+};
+
+type HomePageProps = {
+  route: RouteProp<RootStackParamList, 'Home'>;
+  navigation: any; // fallback to any to avoid linter error
+};
+
+const HomePage = ({route, navigation}: HomePageProps) => {
   const [photo, setPhoto] = useState(require('../../assets/Icon.png'));
   const [firstName, setFirstName] = useState('');
   const [loading, setLoading] = useState(false);
-  const {uid} = route.params;
+  let uid = route?.params?.uid;
+  if (!uid) {
+    uid = getAuth().currentUser?.uid;
+  }
+  if (!uid) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>User not found. Please login again.</Text>
+      </View>
+    );
+  }
   useEffect(() => {
     setLoading(true);
     const dbRef = ref(getDatabase());
@@ -18,8 +40,6 @@ const HomePage = ({route, navigation}) => {
         setLoading(false);
         if (snapshot.exists()) {
           const data = snapshot.val();
-          // setPhoto({uri: data.photo});
-          console.log('data.photo:', data.photo);
           setPhoto(
             data.photo ? {uri: data.photo} : require('../../assets/Icon.png'),
           );
@@ -42,9 +62,7 @@ const HomePage = ({route, navigation}) => {
           <View style={styles.profileContainer}>
             <Image source={photo} style={styles.photo} />
             <Gap height={10} />
-            <Text style={styles.name}>{`Hi, ${
-              firstName || 'No Name Found'
-            }`}</Text>
+            <Text style={styles.name}>{`Hi, ${firstName || 'No Name Found'}`}</Text>
           </View>
         </View>
         <View style={styles.footer}>
@@ -66,7 +84,7 @@ const HomePage = ({route, navigation}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navItem}
-            onPress={() => navigation.navigate('Grades')}>
+            onPress={() => navigation.navigate('Grades', { uid })}>
             <Image
               source={require('../../assets/Certificates.png')}
               style={styles.icon}
@@ -113,7 +131,6 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     alignItems: 'center',
-    // marginTop: 20,
   },
   photo: {
     height: 200,

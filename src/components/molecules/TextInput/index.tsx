@@ -5,6 +5,9 @@ interface CustomTextInputProps {
   placeholder: string;
   secureTextEntry?: boolean;
   icon?: React.ReactNode;
+  value?: string;
+  onChangeText?: (text: string) => void;
+  editable?: boolean;
 }
 
 const TextInput: React.FC<CustomTextInputProps> = ({
@@ -25,6 +28,7 @@ const TextInput: React.FC<CustomTextInputProps> = ({
         style={styles.input}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        editable={rest.editable}
         {...rest}
       />
     </View>

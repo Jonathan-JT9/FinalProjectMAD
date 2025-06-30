@@ -28,6 +28,7 @@ const SignUp = ({navigation}) => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [religion, setReligion] = useState('');
+  const [birth, setBirth] = useState('');
 
   const openCamera = async () => {
     const result = await launchCamera({
@@ -61,6 +62,8 @@ const SignUp = ({navigation}) => {
       address: address,
       religion: religion,
       photo: photoForDB,
+      birth: birth,
+      subjects: {},
     };
     const auth = getAuth();
     const db = getDatabase();
@@ -164,6 +167,13 @@ const SignUp = ({navigation}) => {
             placeholder="Religion"
             value={religion}
             onChangeText={value => setReligion(value)}
+            icon={<PersonIcon width={20} height={20} />}
+          />
+          <Gap height={16} />
+          <TextInput
+            placeholder="Birth"
+            value={birth}
+            onChangeText={value => setBirth(value)}
             icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={32} />

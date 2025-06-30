@@ -1,8 +1,62 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, Alert} from 'react-native';
 import React from 'react';
 import {Gap} from '../../components/atoms';
+import { getDatabase, ref, get, update } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const Profile = ({navigation}) => {
+  const [profile, setProfile] = React.useState<any>(null);
+  const userId = getAuth().currentUser?.uid;
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      if (!userId) return;
+      const db = getDatabase();
+      const userRef = ref(db, `users/${userId}`);
+      const snapshot = await get(userRef);
+      if (snapshot.exists()) {
+        setProfile(snapshot.val());
+      }
+    };
+    fetchProfile();
+  }, [userId]);
+
+  const handleChangePhoto = () => {
+    if (!userId) return;
+    Alert.alert(
+      'Change Profile Photo',
+      'Choose photo source',
+      [
+        {
+          text: 'Camera',
+          onPress: () => handlePickPhoto('camera'),
+        },
+        {
+          text: 'Gallery',
+          onPress: () => handlePickPhoto('gallery'),
+        },
+        { text: 'Cancel', style: 'cancel' },
+      ]
+    );
+  };
+
+  const handlePickPhoto = async (type: 'camera' | 'gallery') => {
+    let result;
+    if (type === 'camera') {
+      result = await launchCamera({ mediaType: 'photo', maxWidth: 200, maxHeight: 200, quality: 0.7, includeBase64: true });
+    } else {
+      result = await launchImageLibrary({ mediaType: 'photo', maxWidth: 200, maxHeight: 200, quality: 0.7, includeBase64: true });
+    }
+    if (result.didCancel) return;
+    const assets = result.assets && result.assets[0];
+    if (!assets) return;
+    const base64 = `data:${assets.type};base64,${assets.base64}`;
+    const db = getDatabase();
+    await update(ref(db, `users/${userId}`), { photo: base64 });
+    setProfile((prev: any) => ({ ...prev, photo: base64 }));
+  };
+
   return (
     <View style={styles.pageContainer}>
       <View style={styles.contentWrapper}>
@@ -11,44 +65,44 @@ const Profile = ({navigation}) => {
         <Gap height={24} />
         <Gap height={16} />
         <View style={styles.profileContainer}>
-          <TouchableOpacity activeOpacity={0.5}>
+          <TouchableOpacity activeOpacity={0.5} onPress={handleChangePhoto}>
             <Image
-              source={require('../../assets/Icon.png')}
-              style={{width: 130, height: 120}}
+              source={profile?.photo ? { uri: profile.photo } : require('../../assets/Icon.png')}
+              style={{width: 130, height: 120, borderRadius: 65}}
             />
           </TouchableOpacity>
           <Gap height={10} />
-          <Text style={styles.name}>JORYMO HADAM</Text>
+          <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
           <Text style={styles.status}>Computer Science | Third Year</Text>
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.infoItem}>
             <Text style={styles.infoTitle}>Email</Text>
-            <Text style={styles.infoText}>jonathanhebat13@gmail.com</Text>
+            <Text style={styles.infoText}>{profile?.email}</Text>
             <Gap height={5} />
           </View>
           <Gap height={15} />
           <View style={styles.infoItem}>
             <Text style={styles.infoTitle}>Birth</Text>
-            <Text style={styles.infoText}>Neptunus, 18 June, 900 B.C</Text>
+            <Text style={styles.infoText}>{profile?.birth}</Text>
             <Gap height={5} />
           </View>
           <Gap height={15} />
           <View style={styles.infoItem}>
             <Text style={styles.infoTitle}>Address</Text>
-            <Text style={styles.infoText}>Neptunus kasana sadiki</Text>
+            <Text style={styles.infoText}>{profile?.address}</Text>
             <Gap height={5} />
           </View>
           <Gap height={15} />
           <View style={styles.infoItem}>
             <Text style={styles.infoTitle}>Phone</Text>
-            <Text style={styles.infoText}>(+00) 123 4567 8910</Text>
+            <Text style={styles.infoText}>{profile?.phone}</Text>
             <Gap height={5} />
           </View>
           <Gap height={15} />
           <View style={styles.infoItem}>
             <Text style={styles.infoTitle}>Religion</Text>
-            <Text style={styles.infoText}>Mormon</Text>
+            <Text style={styles.infoText}>{profile?.religion}</Text>
             <Gap height={5} />
           </View>
         </View>
