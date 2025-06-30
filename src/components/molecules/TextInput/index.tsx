@@ -13,14 +13,18 @@ const TextInput: React.FC<CustomTextInputProps> = ({
   icon,
   ...rest
 }) => {
+  const [isFocused, setIsFocused] = React.useState(false);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isFocused && styles.focused]}>
       {icon && <View style={styles.icon}>{icon}</View>}
       <Input
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}
         placeholderTextColor="#888888"
         style={styles.input}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         {...rest}
       />
     </View>
@@ -35,16 +39,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5F5F5',
     borderRadius: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     height: 56,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  focused: {
+    borderColor: '#6A1B9A',
   },
   icon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 17,
     color: '#000',
     fontFamily: 'Poppins-Regular',
+    paddingVertical: 8,
   },
 });
