@@ -13,11 +13,24 @@ const SignIn = ({navigation}) => {
   const [password, setPassword] = useState('');
 
   const onSubmit = async () => {
+    // Validasi input
+    if (!email || !password) {
+      showMessage({
+        message: 'Email dan password harus diisi',
+        type: 'danger',
+      });
+      return;
+    }
+
+    console.log('Attempting login with email:', email);
+    
     const auth = getAuth();
     const db = getDatabase();
     signInWithEmailAndPassword(auth, email, password)
       .then(async userCredential => {
         const user = userCredential.user;
+        console.log('Login successful, user UID:', user.uid);
+        
         const dbRef = ref(db);
         const snapshot = await get(child(dbRef, `users/${user.uid}`));
         if (snapshot.exists()) {
@@ -29,6 +42,7 @@ const SignIn = ({navigation}) => {
             photo: userData.photo || '',
           });
         } else {
+          console.log('User data not found in database for UID:', user.uid);
           showMessage({
             message: 'Data pengguna tidak ditemukan di database.',
             type: 'danger',
@@ -36,8 +50,32 @@ const SignIn = ({navigation}) => {
         }
       })
       .catch(error => {
+        console.error('Login error:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        
+        let errorMessage = 'Login gagal. Silakan coba lagi.';
+        
+        // Handle specific Firebase Auth errors
+        switch (error.code) {
+          case 'auth/user-not-found':
+            errorMessage = 'Email tidak terdaftar. Silakan buat akun baru.';
+            break;
+          case 'auth/wrong-password':
+            errorMessage = 'Password salah. Silakan coba lagi.';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'Format email tidak valid.';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = 'Terlalu banyak percobaan login. Silakan tunggu beberapa saat.';
+            break;
+          default:
+            errorMessage = error.message || 'Login gagal. Silakan coba lagi.';
+        }
+        
         showMessage({
-          message: error.message,
+          message: errorMessage,
           type: 'danger',
         });
       });
@@ -74,8 +112,8 @@ const SignIn = ({navigation}) => {
         <Button
           text="LOGIN"
           onPress={onSubmit}
-          buttonColor="#FFFFFF"
-          color="#4B2354"
+          buttonColor="#4B2354"
+          color="#FFFFFF"
           radius={22}
           iconOnly={null}
           icon={null}
@@ -84,8 +122,8 @@ const SignIn = ({navigation}) => {
         <Button
           text="CREATE ACCOUNT"
           onPress={() => navigation.navigate('SignUp')}
-          buttonColor="#FFFFFF"
-          color="#4B2354"
+          buttonColor="#4B2354"
+          color="#FFFFFF"
           radius={22}
           iconOnly={null}
           icon={null}

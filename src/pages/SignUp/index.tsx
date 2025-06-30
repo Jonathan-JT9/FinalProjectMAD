@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import {TextInput} from '../../components/molecules';
@@ -28,6 +29,29 @@ const SignUp = ({navigation}) => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [religion, setReligion] = useState('');
+  const [birth, setBirth] = useState('');
+
+  const showImagePicker = () => {
+    Alert.alert(
+      'Pilih Foto',
+      'Pilih sumber foto',
+      [
+        {
+          text: 'Batal',
+          style: 'cancel',
+        },
+        {
+          text: 'Kamera',
+          onPress: () => openCamera(),
+        },
+        {
+          text: 'Galeri',
+          onPress: () => openGallery(),
+        },
+      ],
+      {cancelable: true}
+    );
+  };
 
   const openCamera = async () => {
     const result = await launchCamera({
@@ -39,12 +63,29 @@ const SignUp = ({navigation}) => {
     });
 
     console.log(result);
+    handleImageResult(result);
+  };
+
+  const openGallery = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      maxWidth: 200,
+      maxHeight: 200,
+      quality: 0.7,
+      includeBase64: true,
+    });
+
+    console.log('Gallery result:', result);
+    handleImageResult(result);
+  };
+
+  const handleImageResult = (result: any) => {
     if (result.didCancel) {
       showMessage({
         message: 'Ups, sepertinya anda tidak memilih foto',
         type: 'danger',
       });
-    } else {
+    } else if (result.assets && result.assets[0]) {
       const assets = result.assets[0];
       const base64 = `data: ${assets.type};base64, ${assets.base64}`;
       setPhoto({uri: base64});
@@ -53,6 +94,25 @@ const SignUp = ({navigation}) => {
   };
 
   const onSubmit = () => {
+    // Validasi input
+    if (!firstName || !lastName || !email || !password) {
+      showMessage({
+        message: 'Semua field wajib diisi',
+        type: 'danger',
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      showMessage({
+        message: 'Password minimal 6 karakter',
+        type: 'danger',
+      });
+      return;
+    }
+
+    console.log('Attempting to create account with email:', email);
+    
     const data = {
       firstName: firstName,
       lastName: lastName,
@@ -60,24 +120,62 @@ const SignUp = ({navigation}) => {
       phone: phone,
       address: address,
       religion: religion,
+      birth: birth,
+      status: 'Computer Science | Third Year',
       photo: photoForDB,
     };
+    
+    console.log('User data to save:', data);
+    
     const auth = getAuth();
     const db = getDatabase();
     createUserWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         // Signed up
         const user = userCredential.user;
+        console.log('Account created successfully, UID:', user.uid);
+        
         // Simpan ke dalam real time database
-        set(ref(db, 'users/' + user.uid), data);
-        showMessage({
-          message: 'Registrasi berhasil, silahkan login',
-          type: 'success',
-        });
-        navigation.navigate('SignIn');
+        set(ref(db, 'users/' + user.uid), data)
+          .then(() => {
+            console.log('User data saved to database successfully');
+            showMessage({
+              message: 'Registrasi berhasil, silahkan login',
+              type: 'success',
+            });
+            navigation.navigate('SignIn');
+          })
+          .catch((dbError) => {
+            console.error('Error saving to database:', dbError);
+            showMessage({
+              message: 'Akun dibuat tapi gagal menyimpan data. Silakan coba login.',
+              type: 'warning',
+            });
+            navigation.navigate('SignIn');
+          });
       })
       .catch(error => {
-        const errorMessage = error.message;
+        console.error('SignUp error:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        
+        let errorMessage = 'Registrasi gagal. Silakan coba lagi.';
+        
+        // Handle specific Firebase Auth errors
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain atau login.';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'Format email tidak valid.';
+            break;
+          case 'auth/weak-password':
+            errorMessage = 'Password terlalu lemah. Minimal 6 karakter.';
+            break;
+          default:
+            errorMessage = error.message || 'Registrasi gagal. Silakan coba lagi.';
+        }
+        
         showMessage({
           message: errorMessage,
           type: 'danger',
@@ -105,7 +203,7 @@ const SignUp = ({navigation}) => {
 
         <Gap height={24} />
         <View style={styles.profileContainer}>
-          <TouchableOpacity activeOpacity={0.5} onPress={openCamera}>
+          <TouchableOpacity activeOpacity={0.5} onPress={showImagePicker}>
             <View style={styles.profileBorder}>
               <Image
                 source={photo}
@@ -164,6 +262,13 @@ const SignUp = ({navigation}) => {
             placeholder="Religion"
             value={religion}
             onChangeText={value => setReligion(value)}
+            icon={<PersonIcon width={20} height={20} />}
+          />
+          <Gap height={16} />
+          <TextInput
+            placeholder="Birth (e.g., Jakarta, 18 June 2000)"
+            value={birth}
+            onChangeText={value => setBirth(value)}
             icon={<PersonIcon width={20} height={20} />}
           />
           <Gap height={32} />

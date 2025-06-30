@@ -5,12 +5,16 @@ interface CustomTextInputProps {
   placeholder: string;
   secureTextEntry?: boolean;
   icon?: React.ReactNode;
+  value?: string;
+  onChangeText?: (text: string) => void;
 }
 
 const TextInput: React.FC<CustomTextInputProps> = ({
   placeholder,
   secureTextEntry = false,
   icon,
+  value,
+  onChangeText,
   ...rest
 }) => {
   return (
@@ -21,6 +25,8 @@ const TextInput: React.FC<CustomTextInputProps> = ({
         secureTextEntry={secureTextEntry}
         placeholderTextColor="#888888"
         style={styles.input}
+        value={value}
+        onChangeText={onChangeText}
         {...rest}
       />
     </View>
