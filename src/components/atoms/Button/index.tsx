@@ -1,16 +1,26 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import React from 'react';
 import { BackButton } from '../../../assets';
 
+interface ButtonProps {
+  text?: string;
+  color?: string;
+  buttonColor?: string;
+  iconOnly?: boolean;
+  icon?: string;
+  onPress: () => void;
+  radius?: number;
+}
+
 const Button = ({
-  text,
+  text = '',
   color = '#FFFFFF',
   buttonColor = '#4B2354',
-  iconOnly,
+  iconOnly = false,
   icon,
   onPress,
-  radius = 22,
-}) => {
+  radius = 50,
+}: ButtonProps) => {
   if (iconOnly) {
     return (
       <TouchableOpacity activeOpacity={0.5} onPress={onPress}>
@@ -22,10 +32,13 @@ const Button = ({
   } else {
     return (
       <TouchableOpacity
-        style={[styles.button(color), { borderRadius: radius }]}
-        activeOpacity={0.7}
+        style={[
+          styles.button,
+          { backgroundColor: color, borderRadius: radius },
+        ]}
+        activeOpacity={0.85}
         onPress={onPress}>
-        <Text style={styles.buttonText(buttonColor)}>{text}</Text>
+        <Text style={[styles.buttonText, { color: buttonColor }]}>{text}</Text>
       </TouchableOpacity>
     );
   }
@@ -34,20 +47,18 @@ const Button = ({
 export default Button;
 
 const styles = StyleSheet.create({
-  button: color => ({
-    backgroundColor: color,
-    paddingVertical: 14,
+  button: {
+    paddingVertical: 16,
     justifyContent: 'center',
     alignItems: 'center',
-  }),
-  buttonText: color => ({
-    color,
+  },
+  buttonText: {
     textAlign: 'center',
     fontFamily: 'Poppins-Bold',
-    fontSize: 12,
+    fontSize: 14,
     letterSpacing: 1,
     textTransform: 'uppercase',
-  }),
+  },
   buttonContainer: {
     width: 50,
     height: 50,
