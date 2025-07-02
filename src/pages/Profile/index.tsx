@@ -1,9 +1,11 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image, Alert} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, Alert, ScrollView} from 'react-native';
 import React from 'react';
 import {Gap} from '../../components/atoms';
 import { getDatabase, ref, get, update } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {Button} from '../../components/atoms';
+import { MaterialIcons, FontAwesome5, Feather, Entypo } from '@expo/vector-icons';
 
 const Profile = ({navigation}) => {
   const [profile, setProfile] = React.useState<any>(null);
@@ -59,60 +61,57 @@ const Profile = ({navigation}) => {
 
   return (
     <View style={styles.pageContainer}>
-      <View style={styles.contentWrapper}>
-        <Gap height={24} />
-        <Text style={styles.pageTitle}>PROFILE</Text>
-        <Gap height={24} />
-        <Gap height={16} />
-        <View style={styles.profileContainer}>
-          <TouchableOpacity activeOpacity={0.5} onPress={handleChangePhoto}>
-            <Image
-              source={profile?.photo ? { uri: profile.photo } : require('../../assets/Icon.png')}
-              style={{width: 130, height: 120, borderRadius: 65}}
-            />
-          </TouchableOpacity>
-          <Gap height={10} />
-          <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
-          <Text style={styles.status}>Computer Science | Third Year</Text>
-        </View>
-        <View style={styles.infoContainer}>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Email</Text>
-            <Text style={styles.infoText}>{profile?.email}</Text>
-            <Gap height={5} />
+      <View style={styles.softBg}>
+        <ScrollView contentContainerStyle={{paddingBottom: 16}} showsVerticalScrollIndicator={false}>
+          <Gap height={24} />
+          <Text style={styles.pageTitle}>PROFILE</Text>
+          <Gap height={24} />
+          <Gap height={16} />
+          <View style={styles.profileCardModern}>
+            <TouchableOpacity activeOpacity={0.7} onPress={handleChangePhoto} style={styles.profilePhotoWrapper}>
+              <View style={styles.profilePhotoBorder}>
+                <Image
+                  source={profile?.photo ? { uri: profile.photo } : require('../../assets/Icon.png')}
+                  style={styles.profilePhoto}
+                />
+              </View>
+            </TouchableOpacity>
+            <Gap height={10} />
+            <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
+            <View style={styles.statusBadge}><Text style={styles.statusBadgeText}>Computer Science | Third Year</Text></View>
           </View>
-          <Gap height={15} />
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Birth</Text>
-            <Text style={styles.infoText}>{profile?.birth}</Text>
-            <Gap height={5} />
+          <View style={styles.infoContainerModern}>
+            <View style={styles.infoItemModern}>
+              <Text style={styles.infoTitleModern}>Email</Text>
+              <Text style={styles.infoTextModern}>{profile?.email}</Text>
+            </View>
+            <View style={styles.infoItemModern}>
+              <Text style={styles.infoTitleModern}>Birth</Text>
+              <Text style={styles.infoTextModern}>{profile?.birth}</Text>
+            </View>
+            <View style={styles.infoItemModern}>
+              <Text style={styles.infoTitleModern}>Address</Text>
+              <Text style={styles.infoTextModern}>{profile?.address}</Text>
+            </View>
+            <View style={styles.infoItemModern}>
+              <Text style={styles.infoTitleModern}>Phone</Text>
+              <Text style={styles.infoTextModern}>{profile?.phone}</Text>
+            </View>
+            <View style={styles.infoItemModern}>
+              <Text style={styles.infoTitleModern}>Religion</Text>
+              <Text style={styles.infoTextModern}>{profile?.religion}</Text>
+            </View>
           </View>
-          <Gap height={15} />
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Address</Text>
-            <Text style={styles.infoText}>{profile?.address}</Text>
-            <Gap height={5} />
-          </View>
-          <Gap height={15} />
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Phone</Text>
-            <Text style={styles.infoText}>{profile?.phone}</Text>
-            <Gap height={5} />
-          </View>
-          <Gap height={15} />
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Religion</Text>
-            <Text style={styles.infoText}>{profile?.religion}</Text>
-            <Gap height={5} />
-          </View>
-        </View>
+          <Button
+            text="Add Subject"
+            onPress={() => navigation.navigate('Subject')}
+            color="#70218B"
+            buttonColor="#fff"
+            style={styles.addSubjectBtn}
+          />
+        </ScrollView>
       </View>
-      <TouchableOpacity
-        style={styles.addSubjectButton}
-        onPress={() => navigation.navigate('Subject')}>
-        <Text style={styles.addSubjectButtonText}>Add Subject</Text>
-      </TouchableOpacity>
-      <View style={styles.footer}>
+      <View style={styles.footerModern}>
         <TouchableOpacity
           style={styles.navItem}
           onPress={() => navigation.navigate('HomePage')}>
@@ -147,13 +146,129 @@ export default Profile;
 const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#f0f4f8',
   },
-  contentWrapper: {
+  softBg: {
     flex: 1,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    backgroundColor: '#f3e9ff',
+    overflow: 'hidden',
+  },
+  profileCardModern: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
     alignItems: 'center',
-    backgroundColor: '#FAFAFA',
-    paddingHorizontal: 24,
+    paddingVertical: 28,
+    marginHorizontal: 24,
+    marginBottom: 18,
+    shadowColor: '#a18cd1',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  profilePhotoWrapper: {
+    padding: 4,
+    borderRadius: 70,
+    backgroundColor: 'transparent',
+    marginBottom: 4,
+  },
+  profilePhotoBorder: {
+    borderWidth: 3,
+    borderColor: '#a18cd1',
+    borderRadius: 70,
+    padding: 3,
+  },
+  profilePhoto: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#f3e9ff',
+  },
+  statusBadge: {
+    backgroundColor: '#f3e9ff',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    marginTop: 8,
+  },
+  statusBadgeText: {
+    color: '#a18cd1',
+    fontWeight: 'bold',
+    fontSize: 13,
+    fontFamily: 'Poppins-Medium',
+  },
+  infoContainerModern: {
+    marginHorizontal: 24,
+    marginTop: 10,
+    marginBottom: 18,
+    gap: 0,
+  },
+  infoItemModern: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    backgroundColor: '#f8f6fc',
+    borderRadius: 18,
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    marginBottom: 16,
+    shadowColor: '#a18cd1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  infoTitleModern: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 14,
+    color: '#a18cd1',
+    marginBottom: 6,
+  },
+  infoTextModern: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 13,
+    color: '#444',
+    opacity: 0.85,
+  },
+  addSubjectBtn: {
+    marginTop: 28,
+    marginHorizontal: 32,
+    borderRadius: 22,
+    elevation: 3,
+    shadowColor: '#a18cd1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+  },
+  footerModern: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 14,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#E0E0E0',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    elevation: 8,
+    shadowColor: '#a18cd1',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+  },
+  navItem: {
+    alignItems: 'center',
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
+  iconActive: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+    tintColor: '#a18cd1',
   },
   pageTitle: {
     fontFamily: 'Poppins-SemiBold',
@@ -163,13 +278,9 @@ const styles = StyleSheet.create({
     color: '#4B2354',
     letterSpacing: 1,
   },
-  profileContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
   name: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 18,
+    fontFamily: 'Poppins-Bold',
+    fontSize: 24,
     color: '#000000',
     marginTop: 10,
   },
@@ -192,7 +303,7 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontFamily: 'Poppins-SemiBold',
-    fontSize: 12,
+    fontSize: 16,
     color: '#000',
     marginBottom: 4,
     marginLeft: 45,
@@ -202,28 +313,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#4F4F4F',
     marginLeft: 45,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  navItem: {
-    alignItems: 'center',
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-  },
-  iconActive: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-    tintColor: '#6A1B9A',
   },
   addSubjectButton: {
     backgroundColor: '#4B2354',

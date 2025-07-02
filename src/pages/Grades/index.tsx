@@ -76,17 +76,15 @@ const Grades = ({ navigation }: { navigation: any }) => {
         </View>
         <Gap height={16} />
         {gradesData.map((item, idx) => (
-          <View style={styles.gradeCard} key={idx}>
-            <View style={[styles.iconBox, {backgroundColor: item.color || '#FFD600'}]} />
-            <View style={{flex: 1}}>
-              <Text style={styles.subject}>{item.subject}</Text>
-              <Text style={styles.teacher}>{item.teacher}</Text>
-              <View style={styles.row}>
-                <Text style={styles.gradePoints}>Grade Points : {item.gradePoints}</Text>
-                <View style={styles.gradeInfo}>
-                  <Text style={styles.grade}>{item.grade}</Text>
-                  <Text style={styles.credits}>{item.credits} Credits</Text>
-                </View>
+          <View style={styles.gradeCardModern} key={idx}>
+            <Text style={styles.subjectModern}>{item.subject}</Text>
+            <Text style={styles.statusModern}>{item.status}</Text>
+            <Text style={styles.teacherModern}>{item.teacher}</Text>
+            <View style={styles.rowModern}>
+              <Text style={styles.gradePointsModern}>Grade Points: {item.gradePoints}</Text>
+              <View style={styles.gradeInfoModern}>
+                <Text style={styles.gradeModern}>{item.grade}</Text>
+                <Text style={styles.creditsModern}>{item.credits} Credits</Text>
               </View>
             </View>
           </View>
@@ -128,7 +126,7 @@ export default Grades;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f3e9ff',
     paddingHorizontal: 16,
   },
   header: {
@@ -200,46 +198,55 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
-  gradeCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: '#F7F7F7',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
+  gradeCardModern: {
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    marginBottom: 18,
+    shadowColor: '#a18cd1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  iconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  subject: {
+  subjectModern: {
     fontWeight: '700',
-    fontSize: 15,
-    color: '#222',
-    marginBottom: 2,
+    fontSize: 16,
+    color: '#4B2354',
+    marginBottom: 4,
   },
-  teacher: {
-    fontSize: 13,
-    color: '#888',
+  statusModern: {
+    fontSize: 12,
+    color: '#fff',
+    fontWeight: 'bold',
+    backgroundColor: '#a18cd1',
+    alignSelf: 'flex-start',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
     marginBottom: 8,
   },
-  row: {
+  teacherModern: {
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 10,
+  },
+  rowModern: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  gradePoints: {
+  gradePointsModern: {
     fontSize: 13,
     color: '#888',
   },
-  gradeInfo: {
+  gradeInfoModern: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  grade: {
+  gradeModern: {
     backgroundColor: '#E6F9EA',
     color: '#22C55E',
     fontWeight: '700',
@@ -249,7 +256,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     marginRight: 8,
   },
-  credits: {
+  creditsModern: {
     backgroundColor: '#F3F3F3',
     color: '#888',
     fontWeight: '700',
