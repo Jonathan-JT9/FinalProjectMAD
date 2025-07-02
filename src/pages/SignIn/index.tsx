@@ -17,7 +17,15 @@ const SignIn = ({navigation}) => {
   const onSubmit = async () => {
     const auth = getAuth();
     const db = getDatabase();
-    // setLoading(true);
+    setLoading(true);
+    let loadingTimeout;
+    const hideLoading = () => {
+      if (loadingTimeout) clearTimeout(loadingTimeout);
+      setLoading(false);
+    };
+    loadingTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
     signInWithEmailAndPassword(auth, email, password)
       .then(async userCredential => {
         const user = userCredential.user;
@@ -37,13 +45,14 @@ const SignIn = ({navigation}) => {
             type: 'danger',
           });
         }
-        setLoading(false);
+        setTimeout(hideLoading, 5000); // Ensure loading stays for 5 seconds
       })
       .catch(error => {
         showMessage({
           message: error.message,
           type: 'danger',
         });
+        setTimeout(hideLoading, 5000); // Ensure loading stays for 5 seconds
       });
   };
 
