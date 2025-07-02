@@ -157,21 +157,15 @@ const Subject = ({navigation}: {navigation: any}) => {
         <Button
           text="ALREADY DONE"
           onPress={() => handleSave('Graded', '#FFD600')}
-          color="#4B2354"
+          color="#70218B"
           buttonColor="#fff"
-          radius={22}
-          iconOnly={false}
-          icon=""
         />
         <Gap height={16} />
         <Button
           text="IN PROGRESS"
           onPress={() => handleSave('In Progress', '#BDBDBD')}
-          color="#4B2354"
+          color="#70218B"
           buttonColor="#fff"
-          radius={22}
-          iconOnly={false}
-          icon=""
         />
         <Gap height={30} />
       </ScrollView>
@@ -184,7 +178,7 @@ export default Subject;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f3e9ff',
     paddingHorizontal: 20,
   },
   header: {

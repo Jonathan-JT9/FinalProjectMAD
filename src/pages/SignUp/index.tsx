@@ -212,7 +212,7 @@ export default SignUp;
 const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#f3e9ff',
     paddingHorizontal: 24,
   },
   header: {
