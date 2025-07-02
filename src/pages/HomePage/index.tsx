@@ -74,11 +74,11 @@ const HomePage = ({route, navigation}: HomePageProps) => {
     <>
       <View style={styles.modernBackground}>
         {/* Decorative Shapes */}
-        <View style={styles.shapeCircle1} />
-        <View style={styles.shapeCircle2} />
-        <View style={styles.shapeOval1} />
-        <View style={styles.shapeDot1} />
-        <View style={styles.bgCircle} />
+        {/* <View style={styles.shapeCircle1} /> */}
+        {/* <View style={styles.shapeCircle2} /> */}
+        {/* <View style={styles.shapeOval1} /> */}
+        {/* <View style={styles.shapeDot1} /> */}
+        {/* <View style={styles.bgCircle} /> */}
         <View style={styles.cardWrapper}>
           <View style={styles.profileCard}> 
             {/* Gradient overlay */}
@@ -122,7 +122,7 @@ const HomePage = ({route, navigation}: HomePageProps) => {
               }
             }}
           >
-            <Text style={styles.logoutText}>LOGOUT</Text>
+            <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.footerModern}>
@@ -219,13 +219,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 64,
     borderRadius: 24,
     marginTop: 16,
+    width: '80%',
+    alignSelf: 'center',
   },
   logoutText: {
     color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    letterSpacing: 1,
     textAlign: 'center',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   footerModern: {
     flexDirection: 'row',
@@ -274,15 +277,22 @@ const styles = StyleSheet.create({
     padding: 6,
     marginBottom: -6,
   },
-  bgCircle: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 80 : 60,
-    left: -60,
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: '#a18cd133',
-    zIndex: 0,
+  colorAccentLine: {
+    height: 5,
+    width: 120,
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginTop: 18,
+    marginBottom: 2,
+    backgroundColor: '#a18cd1', // ungu pastel solid
+    opacity: 0.7,
+  },
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderTopLeftRadius: 60,
+    borderBottomRightRadius: 60,
   },
   profilePhotoWrapper: {
     position: 'relative',
@@ -333,63 +343,5 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 6,
     opacity: 0.25,
-  },
-  shapeCircle1: {
-    position: 'absolute',
-    top: 30,
-    left: -40,
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#c4b5fd55', // ungu pastel transparan
-    zIndex: 0,
-  },
-  shapeCircle2: {
-    position: 'absolute',
-    bottom: 60,
-    right: -30,
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#a78bfa55', // ungu pastel transparan
-    zIndex: 0,
-  },
-  shapeOval1: {
-    position: 'absolute',
-    top: 180,
-    right: -60,
-    width: 140,
-    height: 60,
-    borderRadius: 40,
-    backgroundColor: '#a18cd144', // ungu pastel transparan
-    transform: [{ rotate: '18deg' }],
-    zIndex: 0,
-  },
-  shapeDot1: {
-    position: 'absolute',
-    bottom: 120,
-    left: 30,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: '#a78bfa55', // ungu pastel transparan
-    zIndex: 0,
-  },
-  colorAccentLine: {
-    height: 5,
-    width: 120,
-    borderRadius: 3,
-    alignSelf: 'center',
-    marginTop: 18,
-    marginBottom: 2,
-    backgroundColor: '#a18cd1', // ungu pastel solid
-    opacity: 0.7,
-  },
-  gradientOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 28,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderTopLeftRadius: 60,
-    borderBottomRightRadius: 60,
   },
 });

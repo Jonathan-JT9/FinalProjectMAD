@@ -78,7 +78,7 @@ const Profile = ({navigation}) => {
             </TouchableOpacity>
             <Gap height={10} />
             <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
-            <View style={styles.statusBadge}><Text style={styles.statusBadgeText}>Computer Science | Third Year</Text></View>
+            <Text style={styles.statusBadgeText}>Computer Science | Third Year</Text>
           </View>
           <View style={styles.infoContainerModern}>
             <View style={styles.infoItemModern}>
@@ -185,13 +185,6 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     backgroundColor: '#f3e9ff',
-  },
-  statusBadge: {
-    backgroundColor: '#f3e9ff',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    marginTop: 8,
   },
   statusBadgeText: {
     color: '#a18cd1',
