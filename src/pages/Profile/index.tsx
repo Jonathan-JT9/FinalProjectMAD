@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image, Alert, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, Alert, ScrollView, PermissionsAndroid, Platform} from 'react-native';
 import React from 'react';
 import {Gap} from '../../components/atoms';
 import { getDatabase, ref, get, update } from 'firebase/database';
@@ -24,6 +24,50 @@ const Profile = ({navigation}) => {
     fetchProfile();
   }, [userId]);
 
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: "Camera Permission",
+            message: "App needs camera access to take photos",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK"
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const requestStoragePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: "Storage Permission",
+            message: "App needs storage access to select photos",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK"
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleChangePhoto = () => {
     if (!userId) return;
     Alert.alert(
@@ -43,20 +87,86 @@ const Profile = ({navigation}) => {
     );
   };
 
-  const handlePickPhoto = async (type: 'camera' | 'gallery') => {
-    let result;
-    if (type === 'camera') {
-      result = await launchCamera({ mediaType: 'photo', maxWidth: 200, maxHeight: 200, quality: 0.7, includeBase64: true });
-    } else {
-      result = await launchImageLibrary({ mediaType: 'photo', maxWidth: 200, maxHeight: 200, quality: 0.7, includeBase64: true });
+  const testImagePicker = async () => {
+    try {
+      console.log('Testing image picker...');
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        includeBase64: true,
+      });
+      console.log('Test result:', result);
+      Alert.alert('Test Result', JSON.stringify(result, null, 2));
+    } catch (error) {
+      console.error('Test error:', error);
+      Alert.alert('Test Error', error.message);
     }
-    if (result.didCancel) return;
-    const assets = result.assets && result.assets[0];
-    if (!assets) return;
-    const base64 = `data:${assets.type};base64,${assets.base64}`;
-    const db = getDatabase();
-    await update(ref(db, `users/${userId}`), { photo: base64 });
-    setProfile((prev: any) => ({ ...prev, photo: base64 }));
+  };
+
+  const handlePickPhoto = async (type: 'camera' | 'gallery') => {
+    try {
+      console.log('Starting photo picker for type:', type);
+      
+      // Skip permission check for now to test if picker works
+      const options = {
+        mediaType: 'photo' as const,
+        maxWidth: 200,
+        maxHeight: 200,
+        quality: 0.7,
+        includeBase64: true,
+        saveToPhotos: false,
+      };
+
+      console.log('Launching image picker with options:', options);
+      
+      let result;
+      if (type === 'camera') {
+        result = await launchCamera(options);
+      } else {
+        result = await launchImageLibrary(options);
+      }
+      
+      console.log('Image picker result:', result);
+      
+      if (result.didCancel) {
+        console.log('User cancelled image picker');
+        return;
+      }
+      
+      if (result.errorCode) {
+        console.log('Image picker error:', result.errorCode, result.errorMessage);
+        Alert.alert('Error', `Failed to pick image: ${result.errorMessage}`);
+        return;
+      }
+      
+      const assets = result.assets && result.assets[0];
+      if (!assets) {
+        console.log('No assets found in result');
+        Alert.alert('Error', 'No image selected');
+        return;
+      }
+      
+      console.log('Asset found:', assets);
+      
+      if (!assets.base64) {
+        console.log('No base64 data in asset');
+        Alert.alert('Error', 'Failed to process image - no base64 data');
+        return;
+      }
+      
+      const base64 = `data:${assets.type};base64,${assets.base64}`;
+      console.log('Base64 string created, length:', base64.length);
+      
+      const db = getDatabase();
+      console.log('Updating database for user:', userId);
+      await update(ref(db, `users/${userId}`), { photo: base64 });
+      
+      console.log('Database updated successfully');
+      setProfile((prev: any) => ({ ...prev, photo: base64 }));
+      Alert.alert('Success', 'Profile photo updated successfully!');
+    } catch (error) {
+      console.error('Error picking photo:', error);
+      Alert.alert('Error', `Failed to update profile photo: ${error.message}`);
+    }
   };
 
   return (
@@ -105,6 +215,13 @@ const Profile = ({navigation}) => {
           <Button
             text="Add Subject"
             onPress={() => navigation.navigate('Subject')}
+            color="#70218B"
+            buttonColor="#fff"
+            style={styles.addSubjectBtn}
+          />
+          <Button
+            text="Test Image Picker"
+            onPress={testImagePicker}
             color="#70218B"
             buttonColor="#fff"
             style={styles.addSubjectBtn}
