@@ -92,8 +92,6 @@ const Grades = ({ navigation }: { navigation: any }) => {
           </View>
         ))}
         <Gap height={16} />
-        <Button text="DONE" color="#4B2354" buttonColor="#fff" radius={22} iconOnly={false} icon="" onPress={() => {}} />
-        <Gap height={16} />
       </ScrollView>
       <View style={styles.footer}>
         <TouchableOpacity

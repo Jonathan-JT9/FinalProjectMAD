@@ -5,16 +5,19 @@ import {Button, Gap} from '../../components/atoms';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 import {getDatabase, ref, child, get} from 'firebase/database';
 import {showMessage} from 'react-native-flash-message';
+import {Loading} from '../../components/molecules';
 import MailIcon from '../../assets/mail.svg';
 import LockIcon from '../../assets/lock.svg';
 
 const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async () => {
     const auth = getAuth();
     const db = getDatabase();
+    // setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then(async userCredential => {
         const user = userCredential.user;
@@ -34,6 +37,7 @@ const SignIn = ({navigation}) => {
             type: 'danger',
           });
         }
+        setLoading(false);
       })
       .catch(error => {
         showMessage({
@@ -44,54 +48,57 @@ const SignIn = ({navigation}) => {
   };
 
   return (
-    <View style={styles.pageContainer}>
-      <Gap height={40} />
+    <>
+      <View style={styles.pageContainer}>
+        <Gap height={40} />
 
-      <Text style={styles.loginTitle}>LOGIN</Text>
-      <Gap height={24} />
+        <Text style={styles.loginTitle}>LOGIN</Text>
+        <Gap height={24} />
 
-      <Text style={styles.welcomeText}>Welcome to</Text>
-      <Text style={styles.subTitle}>Unklab Student Profile</Text>
-      <Gap height={20} />
+        <Text style={styles.welcomeText}>Welcome to</Text>
+        <Text style={styles.subTitle}>Unklab Student Profile</Text>
+        <Gap height={20} />
 
-      <View style={styles.contentContainer}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={value => setEmail(value)}
-          icon={<MailIcon width={20} height={20} />}
-        />
-        <Gap height={16} />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={value => setPassword(value)}
-          secureTextEntry={true}
-          icon={<LockIcon width={20} height={20} />}
-        />
-        <Gap height={32} />
+        <View style={styles.contentContainer}>
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={value => setEmail(value)}
+            icon={<MailIcon width={20} height={20} />}
+          />
+          <Gap height={16} />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={value => setPassword(value)}
+            secureTextEntry={true}
+            icon={<LockIcon width={20} height={20} />}
+          />
+          <Gap height={32} />
 
-        <Button
-          text="LOGIN"
-          onPress={onSubmit}
-          buttonColor="#FFFFFF"
-          color="#4B2354"
-          radius={22}
-          iconOnly={null}
-          icon={null}
-        />
-        <Gap height={16} />
-        <Button
-          text="CREATE ACCOUNT"
-          onPress={() => navigation.navigate('SignUp')}
-          buttonColor="#FFFFFF"
-          color="#4B2354"
-          radius={22}
-          iconOnly={null}
-          icon={null}
-        />
+          <Button
+            text="LOGIN"
+            onPress={onSubmit}
+            buttonColor="#FFFFFF"
+            color="#4B2354"
+            radius={22}
+            iconOnly={null}
+            icon={null}
+          />
+          <Gap height={16} />
+          <Button
+            text="CREATE ACCOUNT"
+            onPress={() => navigation.navigate('SignUp')}
+            buttonColor="#FFFFFF"
+            color="#4B2354"
+            radius={22}
+            iconOnly={null}
+            icon={null}
+          />
+        </View>
       </View>
-    </View>
+      {loading && <Loading />}
+    </>
   );
 };
 
