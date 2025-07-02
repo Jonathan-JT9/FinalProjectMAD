@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Image, StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import {Button, Gap} from '../../components/atoms';
 import {getDatabase, ref, child, get, onValue} from 'firebase/database';
 import {Loading} from '../../components/molecules';
-import {getAuth} from 'firebase/auth';
+import {getAuth, signOut} from 'firebase/auth';
 import { RouteProp } from '@react-navigation/native';
 
 type RootStackParamList = {
@@ -64,6 +64,44 @@ const HomePage = ({route, navigation}: HomePageProps) => {
             <Gap height={10} />
             <Text style={styles.name}>{`Hi, ${firstName || 'No Name Found'}`}</Text>
           </View>
+        </View>
+        <View style={{alignItems: 'center', marginBottom: 16}}>
+          <Button
+            text="LOGOUT"
+            color="#4B2354"
+            buttonColor="#fff"
+            radius={22}
+            iconOnly={false}
+            icon=""
+            style={{width: '80%', alignSelf: 'center'}}
+            onPress={() => {
+              Alert.alert(
+                'Logout',
+                'Are you sure want to logout?',
+                [
+                  {
+                    text: 'No',
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: async () => {
+                      setLoading(true);
+                      try {
+                        await signOut(getAuth());
+                        setLoading(false);
+                        navigation.reset({ index: 0, routes: [{ name: 'SignIn' }] });
+                      } catch (e) {
+                        setLoading(false);
+                        // Optional: tampilkan error
+                      }
+                    },
+                  },
+                ],
+                { cancelable: true }
+              );
+            }}
+          />
         </View>
         <View style={styles.footer}>
           <TouchableOpacity

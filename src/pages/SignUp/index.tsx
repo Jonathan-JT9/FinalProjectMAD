@@ -17,6 +17,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {showMessage} from 'react-native-flash-message';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 import {getDatabase, ref, set} from 'firebase/database';
+import {Loading} from '../../components/molecules';
 
 const SignUp = ({navigation}) => {
   const [photo, setPhoto] = useState(require('../../assets/Icon.png'));
@@ -29,6 +30,7 @@ const SignUp = ({navigation}) => {
   const [address, setAddress] = useState('');
   const [religion, setReligion] = useState('');
   const [birth, setBirth] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const openCamera = async () => {
     const result = await launchCamera({
@@ -67,12 +69,14 @@ const SignUp = ({navigation}) => {
     };
     const auth = getAuth();
     const db = getDatabase();
+    setLoading(true);
     createUserWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         // Signed up
         const user = userCredential.user;
         // Simpan ke dalam real time database
         set(ref(db, 'users/' + user.uid), data);
+        setLoading(false);
         showMessage({
           message: 'Registrasi berhasil, silahkan login',
           type: 'success',
@@ -81,6 +85,7 @@ const SignUp = ({navigation}) => {
       })
       .catch(error => {
         const errorMessage = error.message;
+        setLoading(false);
         showMessage({
           message: errorMessage,
           type: 'danger',
@@ -89,113 +94,116 @@ const SignUp = ({navigation}) => {
   };
 
   return (
-    <View style={styles.pageContainer}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Gap height={20} />
-        <View style={styles.header}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.goBack()}>
-            <BackIcon width={24} height={24} />
-          </TouchableOpacity>
-          <Text style={styles.headerText}>REGISTER</Text>
-          <View style={{width: 24}} />
-        </View>
+    <>
+      <View style={styles.pageContainer}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Gap height={20} />
+          <View style={styles.header}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.goBack()}>
+              <BackIcon width={24} height={24} />
+            </TouchableOpacity>
+            <Text style={styles.headerText}>REGISTER</Text>
+            <View style={{width: 24}} />
+          </View>
 
-        <Gap height={40} />
-        <Text style={styles.welcomeText}>Welcome to</Text>
-        <Text style={styles.subTitle}>Unklab Student Profile</Text>
+          <Gap height={40} />
+          <Text style={styles.welcomeText}>Welcome to</Text>
+          <Text style={styles.subTitle}>Unklab Student Profile</Text>
 
-        <Gap height={24} />
-        <View style={styles.profileContainer}>
-          <TouchableOpacity activeOpacity={0.5} onPress={openCamera}>
-            <View style={styles.profileBorder}>
-              <Image
-                source={photo}
-                style={{width: 90, height: 90, borderRadius: 45}}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
+          <Gap height={24} />
+          <View style={styles.profileContainer}>
+            <TouchableOpacity activeOpacity={0.5} onPress={openCamera}>
+              <View style={styles.profileBorder}>
+                <Image
+                  source={photo}
+                  style={{width: 90, height: 90, borderRadius: 45}}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
 
-        <Gap height={16} />
-        <View style={styles.formContainer}>
-          <TextInput
-            placeholder="First name"
-            value={firstName}
-            onChangeText={value => setFirstName(value)}
-            icon={<PersonIcon width={20} height={20} />}
-          />
           <Gap height={16} />
-          <TextInput
-            placeholder="Last name"
-            value={lastName}
-            onChangeText={value => setLastName(value)}
-            icon={<PersonIcon width={20} height={20} />}
-          />
-          <Gap height={16} />
-          <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={value => setEmail(value)}
-            icon={<PersonIcon width={20} height={20} />}
-          />
-          <Gap height={16} />
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={value => setPassword(value)}
-            secureTextEntry={true}
-            icon={<PersonIcon width={20} height={20} />}
-          />
-          <Gap height={16} />
-          <TextInput
-            placeholder="Phone"
-            value={phone}
-            onChangeText={value => setPhone(value)}
-            icon={<PersonIcon width={20} height={20} />}
-          />
-          <Gap height={16} />
-          <TextInput
-            placeholder="Address"
-            value={address}
-            onChangeText={value => setAddress(value)}
-            icon={<PersonIcon width={20} height={20} />}
-          />
-          <Gap height={16} />
-          <TextInput
-            placeholder="Religion"
-            value={religion}
-            onChangeText={value => setReligion(value)}
-            icon={<PersonIcon width={20} height={20} />}
-          />
-          <Gap height={16} />
-          <TextInput
-            placeholder="Birth"
-            value={birth}
-            onChangeText={value => setBirth(value)}
-            icon={<PersonIcon width={20} height={20} />}
-          />
-          <Gap height={32} />
-          <Button
-            text="REGISTER NOW"
-            onPress={onSubmit}
-            buttonColor="#FFFFFF"
-            color="#4B2354"
-            radius={50}
-            iconOnly={null}
-            icon={null}
-          />
-          <Gap height={25} />
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => navigation.navigate('SignIn')}>
-            <Text style={styles.bottomText}>Already have an account?</Text>
-          </TouchableOpacity>
-        </View>
-        <Gap height={20} />
-      </ScrollView>
-    </View>
+          <View style={styles.formContainer}>
+            <TextInput
+              placeholder="First name"
+              value={firstName}
+              onChangeText={value => setFirstName(value)}
+              icon={<PersonIcon width={20} height={20} />}
+            />
+            <Gap height={16} />
+            <TextInput
+              placeholder="Last name"
+              value={lastName}
+              onChangeText={value => setLastName(value)}
+              icon={<PersonIcon width={20} height={20} />}
+            />
+            <Gap height={16} />
+            <TextInput
+              placeholder="Email"
+              value={email}
+              onChangeText={value => setEmail(value)}
+              icon={<PersonIcon width={20} height={20} />}
+            />
+            <Gap height={16} />
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={value => setPassword(value)}
+              secureTextEntry={true}
+              icon={<PersonIcon width={20} height={20} />}
+            />
+            <Gap height={16} />
+            <TextInput
+              placeholder="Phone"
+              value={phone}
+              onChangeText={value => setPhone(value)}
+              icon={<PersonIcon width={20} height={20} />}
+            />
+            <Gap height={16} />
+            <TextInput
+              placeholder="Address"
+              value={address}
+              onChangeText={value => setAddress(value)}
+              icon={<PersonIcon width={20} height={20} />}
+            />
+            <Gap height={16} />
+            <TextInput
+              placeholder="Religion"
+              value={religion}
+              onChangeText={value => setReligion(value)}
+              icon={<PersonIcon width={20} height={20} />}
+            />
+            <Gap height={16} />
+            <TextInput
+              placeholder="Birth"
+              value={birth}
+              onChangeText={value => setBirth(value)}
+              icon={<PersonIcon width={20} height={20} />}
+            />
+            <Gap height={32} />
+            <Button
+              text="REGISTER NOW"
+              onPress={onSubmit}
+              buttonColor="#FFFFFF"
+              color="#4B2354"
+              radius={50}
+              iconOnly={null}
+              icon={null}
+            />
+            <Gap height={25} />
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate('SignIn')}>
+              <Text style={styles.bottomText}>Already have an account?</Text>
+            </TouchableOpacity>
+          </View>
+          <Gap height={20} />
+        </ScrollView>
+      </View>
+      {loading && <Loading />}
+    </>
   );
 };
 

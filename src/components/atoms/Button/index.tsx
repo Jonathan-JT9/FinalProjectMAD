@@ -10,6 +10,7 @@ interface ButtonProps {
   icon?: string;
   onPress: () => void;
   radius?: number;
+  style?: StyleProp<ViewStyle>;
 }
 
 const Button = ({
@@ -20,6 +21,7 @@ const Button = ({
   icon,
   onPress,
   radius = 50,
+  style,
 }: ButtonProps) => {
   if (iconOnly) {
     return (
@@ -35,6 +37,7 @@ const Button = ({
         style={[
           styles.button,
           { backgroundColor: color, borderRadius: radius },
+          style,
         ]}
         activeOpacity={0.85}
         onPress={onPress}>
